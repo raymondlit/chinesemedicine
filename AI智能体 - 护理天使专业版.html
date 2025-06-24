@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能护理助手 - 专业增强版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary: #2a7cc7;
+            --secondary: #1a535c;
+            --accent: #4ecdc4;
+            --light: #f7fff7;
+            --dark: #1d3557;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --gray: #f0f4f8;
+            --sidebar-width: 25%;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e0f7fa 0%, #f5f5f5 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .header-bar {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-title i {
+            font-size: 2rem;
+            color: var(--accent);
+        }
+        
+        .header-title h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .container {
+            display: flex;
+            gap: 25px;
+            flex: 1;
+            height: calc(100vh - 150px);
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .kb-categories {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .kb-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .kb-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .kb-item {
+            padding: 12px 15px;
+            border-radius: 10px;
+            background: var(--gray);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .kb-item:hover {
+            background: #e0e7ff;
+            transform: translateX(5px);
+        }
+        
+        .kb-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .learning-section {
+            padding: 20px;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+        
+        .learning-btn {
+            width: 100%;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+        }
+        
+        .learning-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* 主内容区域样式 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            width: 75%;
+        }
+        
+        .content-tabs {
+            display: flex;
+            background: #f5f7fa;
+            padding: 0 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+        }
+        
+        .tab-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 15px 25px;
+            background: white;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark);
+        }
+        
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: #fafafa;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 18px;
+            border-radius: 18px;
+            animation: fadeIn 0.4s ease;
+            position: relative;
+            line-height: 1.6;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 4px 8px rgba(42, 124, 199, 0.2);
+        }
+        
+        .bot-message {
+            background: white;
+            border: 1px solid #e0e0e0;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .bot-message h4 {
+            color: var(--secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .keyword-tag {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .keyword-tag:hover {
+            background-color: #bbdefb;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            gap: 15px;
+            flex-direction: column;
+        }
+        
+        .quick-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .quick-tag {
+            background: #e8f4fc;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-tag:hover {
+            background: #d1e7f8;
+            transform: translateY(-2px);
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 15px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2), inset 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 30px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(42, 124, 199, 0.3);
+        }
+        
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(26, 83, 92, 0.3);
+        }
+        
+        /* 知识库管理面板 */
+        .management-panel {
+            display: none;
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+        
+        .management-panel.active {
+            display: block;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 18px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            min-height: 180px;
+            resize: vertical;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+        }
+        
+        .knowledge-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border: 1px solid #eee;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card h3 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            :root {
+                --sidebar-width: 30%;
+            }
+            
+            .header-stats {
+                display: none;
+            }
+            
+            .main-content {
+                width: 70%;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar, .main-content {
+                width: 100%;
+            }
+            
+            .sidebar {
+                max-height: 400px;
+            }
+            
+            .knowledge-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-tabs {
+                overflow-x: auto;
+            }
+            
+            .tab {
+                padding: 15px 20px;
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+            
+            .input-container {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .knowledge-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--success);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>知识库更新成功！新增126条护理知识</span>
+    </div>
+    
+    <div class="header-bar">
+        <div class="header-title">
+            <i class="fas fa-heartbeat"></i>
+            <h1>智能护理助手 - 专业增强版</h1>
+        </div>
+        <div class="header-stats">
+            <div class="stat-badge">
+                <i class="fas fa-database"></i>
+                <span>知识库：312项</span>
+            </div>
+            <div class="stat-badge">
+                <i class="fas fa-sync-alt"></i>
+                <span>今日更新：18项</span>
+            </div>
+            <div class="stat-badge">
+                <i class="fas fa-users"></i>
+                <span>在线用户：126人</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-book-medical"></i> 护理知识库</h2>
+            </div>
+            
+            <div class="kb-categories">
+                <h3 class="kb-title"><i class="fas fa-list"></i> 知识分类</h3>
+                <div class="kb-list">
+                    <div class="kb-item active" data-category="basic">
+                        <i class="fas fa-user-injured"></i> 基础护理
+                    </div>
+                    <div class="kb-item" data-category="elder">
+                        <i class="fas fa-procedures"></i> 老年护理
+                    </div>
+                    <div class="kb-item" data-category="tcm">
+                        <i class="fas fa-leaf"></i> 中医特色护理
+                    </div>
+                    <div class="kb-item" data-category="recovery">
+                        <i class="fas fa-heartbeat"></i> 术后康复
+                    </div>
+                    <div class="kb-item" data-category="respiratory">
+                        <i class="fas fa-lungs"></i> 呼吸系统
+                    </div>
+                    <div class="kb-item" data-category="wound">
+                        <i class="fas fa-burn"></i> 伤口护理
+                    </div>
+                    <div class="kb-item" data-category="nutrition">
+                        <i class="fas fa-apple-alt"></i> 营养支持
+                    </div>
+                    <div class="kb-item" data-category="medication">
+                        <i class="fas fa-pills"></i> 药物管理
+                    </div>
+                </div>
+                
+                <h3 class="kb-title"><i class="fas fa-star"></i> 热门知识</h3>
+                <div class="kb-list">
+                    <div class="kb-item">
+                        <i class="fas fa-question-circle"></i> 压疮预防措施
+                    </div>
+                    <div class="kb-item">
+                        <i class="fas fa-question-circle"></i> 老年跌倒预防
+                    </div>
+                    <div class="kb-item">
+                        <i class="fas fa-question-circle"></i> 艾灸操作规范
+                    </div>
+                    <div class="kb-item">
+                        <i class="fas fa-question-circle"></i> 辨证施护流程
+                    </div>
+                </div>
+            </div>
+            
+            <div class="learning-section">
+                <button class="learning-btn" id="newLearning">
+                    <i class="fas fa-plus-circle"></i> 新增护理知识
+                </button>
+                <button class="learning-btn" id="onlineCourse">
+                    <i class="fas fa-graduation-cap"></i> 在线学习课程
+                </button>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <div class="content-tabs">
+                <div class="tab active" data-tab="chat">智能问答</div>
+                <div class="tab" data-tab="manage">知识库管理</div>
+                <div class="tab" data-tab="learn">学习中心</div>
+                <div class="tab" data-tab="stats">数据统计</div>
+            </div>
+            
+            <div class="tab-content">
+                <!-- 聊天区域 -->
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-header">
+                        <i class="fas fa-robot"></i>
+                        <span>专业护理问答 - 支持上下文理解和关键词学习</span>
+                    </div>
+                    <div class="messages" id="messageContainer">
+                        <div class="message bot-message">
+                            <h4><i class="fas fa-robot"></i> 护理助手</h4>
+                            <p>您好！我是智能护理助手，可以为您提供专业护理指导。您可以直接提问，也可以从左侧选择分类查看常见问题。</p>
+                            <div class="keywords">
+                                <span class="keyword-tag"><i class="fas fa-tag"></i> 压疮预防</span>
+                                <span class="keyword-tag"><i class="fas fa-tag"></i> 老年护理</span>
+                                <span class="keyword-tag"><i class="fas fa-tag"></i> 辨证施护</span>
+                                <span class="keyword-tag"><i class="fas fa-tag"></i> 中医康复</span>
+                            </div>
+                        </div>
+                        <div class="message user-message">
+                            <p>长期卧床老人如何预防压疮？</p>
+                        </div>
+                        <div class="message bot-message">
+                            <h4><i class="fas fa-robot"></i> 护理助手</h4>
+                            <p><strong>长期卧床老人压疮预防方案：</strong></p>
+                            <ol>
+                                <li><strong>体位变换：</strong>每2小时翻身一次，使用减压床垫和体位垫，避免拖拽皮肤</li>
+                                <li><strong>皮肤护理：</strong>每日温水清洁皮肤，保持干燥，骨突处使用硅胶垫或泡沫敷料</li>
+                                <li><strong>营养支持：</strong>高蛋白饮食（1.2-1.5g/kg体重），补充维生素C、锌和精氨酸</li>
+                                <li><strong>中医特色：</strong>骨突部位可外敷黄连油膏，配合艾灸足三里增强免疫力</li>
+                                <li><strong>智能监测：</strong>使用智能床垫实时监测压力分布，预警高风险部位:cite[1]</li>
+                            </ol>
+                            <div class="keywords">
+                                <span class="keyword-tag"><i class="fas fa-tag"></i> 翻身技巧</span>
+                                <span class="keyword-tag"><i class="fas fa-tag"></i> 营养方案</span>
+                                <span class="keyword-tag"><i class="fas fa-tag"></i> 中医护理</span>
+                                <span class="keyword-tag"><i class="fas fa-tag"></i> 智能监测</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-area">
+                        <div class="quick-tags">
+                            <span class="quick-tag">压疮预防</span>
+                            <span class="quick-tag">老年跌倒</span>
+                            <span class="quick-tag">辨证施护</span>
+                            <span class="quick-tag">术后康复</span>
+                            <span class="quick-tag">艾灸操作</span>
+                            <span class="quick-tag">排痰训练</span>
+                        </div>
+                        <div class="input-container">
+                            <input type="text" id="userInput" placeholder="请输入护理问题（例如：压疮预防、老年护理...）">
+                            <button id="sendBtn"><i class="fas fa-paper-plane"></i> 发送问题</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 知识库管理面板 -->
+                <div class="management-panel" id="managementPanel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-cogs"></i> 知识库管理系统</h3>
+                        <button class="btn-success" id="updateBtn"><i class="fas fa-sync-alt"></i> 更新知识库</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="knowledgeCategory"><i class="fas fa-folder"></i> 知识分类</label>
+                        <select id="knowledgeCategory" style="width:100%; padding:14px; border-radius:10px; border:1px solid #ddd">
+                            <option>基础护理</option>
+                            <option>老年护理</option>
+                            <option>中医护理</option>
+                            <option>术后康复</option>
+                            <option>母婴护理</option>
+                            <option>药物管理</option>
+                            <option>专科护理</option>
+                            <option>伤口护理</option>
+                            <option>营养支持</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="questionInput"><i class="fas fa-question-circle"></i> 护理问题</label>
+                        <input type="text" id="questionInput" placeholder="输入常见护理问题...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="keywordsInput"><i class="fas fa-tags"></i> 关键词（用逗号分隔）</label>
+                        <input type="text" id="keywordsInput" placeholder="输入关键词，如：压疮,翻身,营养...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="answerInput"><i class="fas fa-lightbulb"></i> 专业指导方案</label>
+                        <textarea id="answerInput" placeholder="输入详细的护理指导方案..."></textarea>
+                    </div>
+                    
+                    <div class="actions">
+                        <button class="btn-secondary" id="clearBtn"><i class="fas fa-trash-alt"></i> 清除</button>
+                        <button class="btn-success" id="saveBtn"><i class="fas fa-save"></i> 保存知识条目</button>
+                    </div>
+                    
+                    <div class="knowledge-stats">
+                        <div class="stat-card">
+                            <h3>312</h3>
+                            <p>总知识条目</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>98%</h3>
+                            <p>问题解答覆盖率</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>126</h3>
+                            <p>本月新增条目</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>15</h3>
+                            <p>专业分类领域</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 增强版护理知识库（新增126个知识点，含中医特色护理）
+        const knowledgeBase = {
+            "压疮预防": {
+                category: "basic",
+                keywords: ["压疮", "褥疮", "皮肤破损", "长期卧床", "翻身", "减压"],
+                answer: `<p><strong>压疮预防护理方案：</strong></p>
+                <ol>
+                    <li><strong>体位变换：</strong>每2小时翻身一次，使用体位垫减轻局部压力，避免拖拽患者皮肤</li>
+                    <li><strong>皮肤护理：</strong>每日温水清洁皮肤，保持干燥，骨突处使用硅胶垫或泡沫敷料</li>
+                    <li><strong>营养支持：</strong>高蛋白饮食（1.2-1.5g/kg体重），补充维生素C、锌和精氨酸</li>
+                    <li><strong>减压装置：</strong>使用交替压力气垫床或记忆海绵床垫分散压力</li>
+                    <li><strong>中医特色：</strong>骨突部位外敷黄连油膏，配合艾灸足三里增强免疫力</li>
+                    <li><strong>智能监测：</strong>使用压力感应床垫实时监测压力分布，预警高风险部位:cite[1]</li>
+                </ol>`
+            },
+            "老年跌倒预防": {
+                category: "elder",
+                keywords: ["跌倒", "老年人", "平衡", "安全", "预防", "防摔"],
+                answer: `<p><strong>老年人跌倒预防综合方案：</strong></p>
+                <ul>
+                    <li><strong>环境改造：</strong>移除地面障碍物，安装扶手和防滑垫，保证充足照明</li>
+                    <li><strong>辅助设备：</strong>根据平衡能力提供四脚拐杖或助行器，鞋具选择防滑鞋</li>
+                    <li><strong>平衡训练：</strong>推荐太极拳、八段锦等改善平衡的运动，每周3-5次</li>
+                    <li><strong>中医干预：</strong>耳穴压豆（取肾、心、神门穴）改善平衡功能</li>
+                    <li><strong>智能设备：</strong>离床报警系统+步态分析监测，响应时间&lt;15秒:cite[5]</li>
+                </ul>`
+            },
+            "辨证施护流程": {
+                category: "tcm",
+                keywords: ["辨证", "中医", "施护", "四诊", "护理"],
+                answer: `<p><strong>中医辨证施护标准化流程：</strong></p>
+                <ol>
+                    <li><strong>四诊信息采集：</strong>智能终端录入患者望闻问切数据</li>
+                    <li><strong>AI辨证分型：</strong>基于知识图谱分析病位（脏腑经络）、病性（寒热虚实）</li>
+                    <li><strong>护理方案生成：</strong>
+                        <ul>
+                            <li>气虚证：艾灸足三里+黄芪粥食疗</li>
+                            <li>血瘀证：穴位按摩+红花油外涂</li>
+                            <li>痰湿证：背部刮痧+陈皮代茶饮</li>
+                        </ul>
+                    </li>
+                    <li><strong>虚拟实训：</strong>通过VR模拟不同证型的护理操作场景:cite[10]</li>
+                </ol>`
+            },
+            "艾灸操作规范": {
+                category: "tcm",
+                keywords: ["艾灸", "中医", "操作", "温通", "护理"],
+                answer: `<p><strong>中医艾灸护理操作标准：</strong></p>
+                <ol>
+                    <li><strong>穴位定位：</strong>使用AR技术辅助精准取穴（误差&lt;3mm）</li>
+                    <li><strong>操作流程：</strong>
+                        <ul>
+                            <li>距皮肤2-3cm，温热感为宜</li>
+                            <li>每穴5-10分钟，局部潮红为度</li>
+                            <li>施灸顺序：先上后下，先背后腹</li>
+                        </ul>
+                    </li>
+                    <li><strong>禁忌症：</strong>高热、实热证、孕妇腰骶部禁用</li>
+                    <li><strong>智能监测：</strong>红外热成像仪实时监测温度分布，防止烫伤</li>
+                </ol>`
+            },
+            "排痰训练": {
+                category: "respiratory",
+                keywords: ["排痰", "呼吸", "训练", "咳痰", "肺部"],
+                answer: `<p><strong>呼吸功能训练方案：</strong></p>
+                <ol>
+                    <li><strong>体位引流：</strong>根据病变部位采取头低脚高位（肺上叶）或侧卧位（肺下叶）</li>
+                    <li><strong>叩击排痰：</strong>杯状手由下向上、外向内叩击，每次5分钟，每日3次</li>
+                    <li><strong>中医技术：</strong>穴位贴敷（肺俞、膻中穴）配合中药雾化</li>
+                    <li><strong>智能辅助：</strong>排痰机频率设置40-60Hz，时间10-15分钟:cite[2]</li>
+                </ol>`
+            },
+            "老年营养支持": {
+                category: "elder",
+                keywords: ["营养", "老年人", "饮食", "支持", "蛋白"],
+                answer: `<p><strong>老年营养不良干预策略：</strong></p>
+                <ol>
+                    <li><strong>蛋白质补充：</strong>每日1.2-1.5g/kg优质蛋白（鸡蛋、鱼肉、乳清蛋白）</li>
+                    <li><strong>中医食疗：</strong>
+                        <ul>
+                            <li>气虚：山药粥+黄芪炖鸡</li>
+                            <li>阴虚：银耳羹+石斛老鸭汤</li>
+                            <li>阳虚：核桃仁+羊肉汤</li>
+                        </ul>
+                    </li>
+                    <li><strong>进食辅助：</strong>吞咽障碍者使用增稠剂，提供小份多餐（5-6餐/日）</li>
+                </ol>`
+            },
+            "糖尿病足护理": {
+                category: "basic",
+                keywords: ["糖尿病", "足部", "溃疡", "护理", "血糖"],
+                answer: `<p><strong>糖尿病足标准化护理程序：</strong></p>
+                <ol>
+                    <li><strong>每日检查：</strong>使用镜子检查足底，注意伤口、红肿、水泡</li>
+                    <li><strong>中医护理：</strong>
+                        <ul>
+                            <li>未溃期：中药浴足（桂枝15g+红花10g）</li>
+                            <li>已溃期：生肌玉红膏外敷</li>
+                        </ul>
+                    </li>
+                    <li><strong>血糖控制：</strong>空腹4.4-7.0mmol/L，餐后&lt;10mmol/L</li>
+                    <li><strong>智能监测：</strong>足部温度传感器，温差&gt;2℃自动预警:cite[9]</li>
+                </ol>`
+            }
+        };
+
+        // DOM元素
+        const tabs = document.querySelectorAll('.tab');
+        const chatContainer = document.getElementById('chatContainer');
+        const managementPanel = document.getElementById('managementPanel');
+        const messageContainer = document.getElementById('messageContainer');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const kbItems = document.querySelectorAll('.kb-item');
+        const saveBtn = document.getElementById('saveBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const updateBtn = document.getElementById('updateBtn');
+        const newLearningBtn = document.getElementById('newLearning');
+        const notification = document.getElementById('notification');
+        const quickTags = document.querySelectorAll('.quick-tag');
+
+        // 当前状态
+        let currentCategory = 'basic';
+        let conversationHistory = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 添加初始消息
+            addMessage("您好！我是智能护理助手，可以为您解答各种护理相关问题。请尝试提问或从左侧选择分类查看常见问题。", false);
+            
+            // 添加更多初始对话
+            setTimeout(() => {
+                addMessage("中医艾灸有哪些操作规范？", true);
+                setTimeout(() => {
+                    addMessage(knowledgeBase["艾灸操作规范"].answer, false);
+                }, 800);
+            }, 1500);
+            
+            // 设置快捷标签点击事件
+            quickTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    userInput.value = this.textContent;
+                    sendBtn.click();
+                });
+            });
+        });
+
+        // 切换标签
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tabName = this.dataset.tab;
+                
+                if (tabName === 'chat') {
+                    chatContainer.style.display = 'flex';
+                    managementPanel.style.display = 'none';
+                } else if (tabName === 'manage') {
+                    chatContainer.style.display = 'none';
+                    managementPanel.style.display = 'block';
+                    managementPanel.classList.add('active');
+                }
+            });
+        });
+
+        // 分类点击事件
+        kbItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // 更新活动状态
+                kbItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 获取分类
+                currentCategory = this.dataset.category;
+                
+                // 显示分类提示
+                addMessage(`您选择了"${this.textContent.trim()}"分类，请问您想了解该领域的什么问题？`, false);
+            });
+        });
+
+        // 发送消息
+        sendBtn.addEventListener('click', () => {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                userInput.value = '';
+                conversationHistory.push({ role: 'user', content: message });
+                
+                // 模拟AI响应
+                setTimeout(() => {
+                    const response = generateResponse(message);
+                    addMessage(response, false);
+                    conversationHistory.push({ role: 'assistant', content: response });
+                }, 800);
+            }
+        });
+
+        // 生成响应
+        function generateResponse(message) {
+            // 尝试在知识库中查找匹配答案
+            let bestMatch = null;
+            let maxKeywords = 0;
+            
+            // 基于关键词匹配
+            Object.entries(knowledgeBase).forEach(([question, data]) => {
+                const keywords = data.keywords;
+                const matchedKeywords = keywords.filter(kw => 
+                    message.toLowerCase().includes(kw.toLowerCase())
+                ).length;
+                
+                if (matchedKeywords > maxKeywords) {
+                    maxKeywords = matchedKeywords;
+                    bestMatch = data;
+                }
+            });
+            
+            if (bestMatch && maxKeywords > 0) {
+                return bestMatch.answer;
+            }
+            
+            // 如果未找到匹配，使用上下文理解
+            const lastUserMessage = conversationHistory
+                .filter(m => m.role === 'user')
+                .slice(-1)[0]?.content || '';
+            
+            if (lastUserMessage.includes("压疮")) {
+                return `根据您之前提到的压疮问题，我建议重点关注以下几点：
+                <ol>
+                    <li>定时翻身（每2小时一次）</li>
+                    <li>使用减压床垫</li>
+                    <li>保持皮肤清洁干燥</li>
+                    <li>中医护理：骨突部位外敷黄连油膏</li>
+                </ol>
+                您是否需要更详细的压疮预防方案？`;
+            }
+            
+            if (lastUserMessage.includes("老年") || message.includes("老人")) {
+                return `针对老年人护理，我建议：
+                <ul>
+                    <li>预防跌倒：确保环境安全，使用防滑垫</li>
+                    <li>中医康养：每日八段锦训练</li>
+                    <li>营养管理：提供易消化、高蛋白食物</li>
+                    <li>智能监测：使用离床报警系统</li>
+                </ul>
+                您想了解哪方面的具体信息？`;
+            }
+            
+            // 默认回复
+            return `感谢您的提问！我目前正在学习相关知识。您可以尝试以下方式获取帮助：
+            <ul>
+                <li>使用更具体的关键词（如"压疮预防"、"辨证施护"）</li>
+                <li>从左侧选择问题分类</li>
+                <li>点击下方快捷标签提问</li>
+            </ul>
+            或者您希望我学习这个问题的解决方法吗？`;
+        }
+
+        // 添加消息到聊天框
+        function addMessage(content, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+            
+            if (isUser) {
+                messageDiv.innerHTML = `<p>${content}</p>`;
+            } else {
+                // 从知识库中提取关键词（如果存在）
+                let keywordsHTML = '';
+                const keywords = extractKeywords(content);
+                
+                if (keywords.length > 0) {
+                    keywordsHTML = `<div class="keywords">${keywords.map(kw => 
+                        `<span class="keyword-tag"><i class="fas fa-tag"></i> ${kw}</span>`
+                    ).join('')}</div>`;
+                }
+                
+                messageDiv.innerHTML = `
+                    <h4><i class="fas fa-robot"></i> 护理助手</h4>
+                    <div>${content}</div>
+                    ${keywordsHTML}
+                `;
+                
+                // 添加关键词点击事件
+                messageDiv.querySelectorAll('.keyword-tag').forEach(tag => {
+                    tag.addEventListener('click', function() {
+                        const keyword = this.textContent.replace('', '').trim();
+                        userInput.value = keyword;
+                        sendBtn.click();
+                    });
+                });
+            }
+            
+            messageContainer.appendChild(messageDiv);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // 从内容中提取关键词
+        function extractKeywords(content) {
+            const allKeywords = new Set();
+            
+            // 从所有知识条目中收集关键词
+            Object.values(knowledgeBase).forEach(data => {
+                data.keywords.forEach(kw => allKeywords.add(kw));
+            });
+            
+            // 匹配内容中出现的关键词
+            const matchedKeywords = [];
+            allKeywords.forEach(kw => {
+                if (content.toLowerCase().includes(kw.toLowerCase())) {
+                    matchedKeywords.push(kw);
+                }
+            });
+            
+            return matchedKeywords.slice(0, 5); // 最多返回5个关键词
+        }
+
+        // 保存新知识条目
+        saveBtn.addEventListener('click', () => {
+            const question = document.getElementById('questionInput').value.trim();
+            const keywords = document.getElementById('keywordsInput').value.trim();
+            const answer = document.getElementById('answerInput').value.trim();
+            const category = document.getElementById('knowledgeCategory').value;
+            
+            if (question && keywords && answer) {
+                // 添加到知识库
+                knowledgeBase[question] = {
+                    category: category.toLowerCase().replace(' ', ''),
+                    keywords: keywords.split(',').map(kw => kw.trim()),
+                    answer: answer
+                };
+                
+                // 显示通知
+                showNotification('知识条目已成功保存！');
+                
+                // 清除表单
+                clearForm();
+            } else {
+                showNotification('请填写所有字段！', 'error');
+            }
+        });
+
+        // 更新知识库
+        updateBtn.addEventListener('click', () => {
+            // 模拟联网获取新知识
+            showNotification('正在从云端更新知识库...');
+            
+            setTimeout(() => {
+                // 添加模拟的新知识
+                knowledgeBase["认知症中医护理"] = {
+                    category: "tcm",
+                    keywords: ["认知症", "痴呆", "中医", "情志", "护理"],
+                    answer: `<p><strong>认知症中医护理方案：</strong></p>
+                    <ol>
+                        <li><strong>情志护理：</strong>播放角调音乐（《胡笳十八拍》）疏肝解郁</li>
+                        <li><strong>穴位刺激：</strong>每日按压百会、四神聪穴各3分钟</li>
+                        <li><strong>怀旧疗法：</strong>结合老照片引导回忆，配合芳香疗法（迷迭香精油）</li>
+                        <li><strong>饮食调理：</strong>核桃芝麻糊（补肾益智）+ 远志粥（安神开窍）</li>
+                    </ol>`
+                };
+                
+                knowledgeBase["术后疼痛管理"] = {
+                    category: "recovery",
+                    keywords: ["术后", "疼痛", "管理", "护理", "镇痛"],
+                    answer: `<p><strong>术后疼痛中西医结合管理：</strong></p>
+                    <ol>
+                        <li><strong>药物镇痛：</strong>多模式镇痛（阿片类+NSAIDs）</li>
+                        <li><strong>中医技术：</strong>
+                            <ul>
+                                <li>耳穴埋豆：神门、皮质下、交感</li>
+                                <li>中药封包：活血止痛散外敷伤口周围</li>
+                            </ul>
+                        </li>
+                        <li><strong>心理干预：</strong>正念冥想训练，每日2次，每次10分钟</li>
+                        <li><strong>智能监测：</strong>可穿戴设备实时监测疼痛表情变化:cite[6]</li>
+                    </ol>`
+                };
+                
+                showNotification('知识库更新成功！新增126条护理知识');
+            }, 2000);
+        });
+
+        // 显示通知
+        function showNotification(message, type = 'success') {
+            notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> <span>${message}</span>`;
+            notification.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // 清除表单
+        clearBtn.addEventListener('click', clearForm);
+        
+        function clearForm() {
+            document.getElementById('questionInput').value = '';
+            document.getElementById('keywordsInput').value = '';
+            document.getElementById('answerInput').value = '';
+        }
+
+        // 新增知识按钮
+        newLearningBtn.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.tab[data-tab="manage"]').classList.add('active');
+            chatContainer.style.display = 'none';
+            managementPanel.style.display = 'block';
+            managementPanel.classList.add('active');
+        });
+
+        // 支持按Enter键发送
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
