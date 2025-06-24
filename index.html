@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>河南中医药大学 - AI智能体平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        :root {
+            --primary: #2a7cc7;
+            --secondary: #1a535c;
+            --accent: #d4af37;
+            --tcm-red: #c3272b;
+            --tcm-green: #4a8c55;
+            --light: #f7f3e9;
+            --dark: #2c2416;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --tcm-blue: #1a5276;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f5f5f5 100%);
+            min-height: 100vh;
+            color: #333;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" opacity="0.05"><path d="M50,50 Q100,30 150,50 T250,50 M50,150 Q100,130 150,150 T250,150" stroke="%234a8c55" fill="none" stroke-width="2"/></svg>');
+            background-size: 300px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background: linear-gradient(to right, var(--tcm-green), var(--tcm-blue));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><path d="M20,20 Q40,5 60,20 T100,20 M20,60 Q40,45 60,60 T100,60" stroke="white" fill="none" stroke-width="1"/></svg>');
+            background-size: 150px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo i {
+            font-size: 3rem;
+            color: var(--accent);
+        }
+        
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .university-name {
+            font-size: 1.1rem;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 8px 25px;
+            border-radius: 30px;
+            margin-top: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 工具展示区域 */
+        .tools-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            color: var(--tcm-blue);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--tcm-green);
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tool-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .tool-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+        }
+        
+        .tool-title {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            font-size: 1.6rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .tool-content {
+            padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tool-description {
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            flex: 1;
+        }
+        
+        .tool-features {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .tool-features li {
+            margin-bottom: 10px;
+            color: #666;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .tool-features li::before {
+            content: '✓';
+            color: var(--tcm-green);
+            font-weight: bold;
+        }
+        
+        .tool-button {
+            display: block;
+            text-align: center;
+            padding: 14px;
+            border-radius: 10px;
+            background: var(--tcm-green);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .tool-button:hover {
+            background: var(--tcm-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(26, 82, 118, 0.3);
+        }
+        
+        /* 添加工具区域 */
+        .add-tool-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+        
+        .add-tool-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            color: var(--tcm-blue);
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            border-color: var(--tcm-green);
+            box-shadow: 0 0 0 3px rgba(74, 140, 85, 0.2);
+            outline: none;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .submit-button {
+            padding: 16px 35px;
+            border: none;
+            border-radius: 10px;
+            background: var(--tcm-blue);
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .submit-button:hover {
+            background: #14425e;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(26, 82, 118, 0.4);
+        }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 1.05rem;
+            border-top: 1px solid #eee;
+            margin-top: 30px;
+        }
+        
+        .footer a {
+            color: var(--tcm-blue);
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--success);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">新工具已成功添加！</span>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <h1>河南中医药大学 - AI智能体平台</h1>
+            </div>
+            <p class="subtitle">融合传统中医智慧与现代人工智能技术</p>
+            <div class="university-name">河南中医药大学</div>
+        </div>
+        
+        <div class="tools-section">
+            <h2 class="section-title">
+                <i class="fas fa-tools"></i>
+                智能工具平台
+            </h2>
+            
+            <div class="tools-grid" id="toolsContainer">
+                <!-- 岐黄天使 - 中医虚拟问诊训练系统 -->
+                <div class="tool-card">
+                    <div class="tool-image" style="background: linear-gradient(45deg, #1a535c, #4a8c55);">
+                        <div class="tool-title">岐黄天使</div>
+                    </div>
+                    <div class="tool-content">
+                        <p class="tool-description">
+                            中医虚拟问诊训练系统，提供100个精选中医病案，涵盖内科、妇科、儿科等各类疾病。学生可通过模拟问诊实践，提升中医辨证论治能力。
+                        </p>
+                        <ul class="tool-features">
+                            <li>100个真实中医病案场景</li>
+                            <li>中医辨证分型指导</li>
+                            <li>虚拟患者智能对话</li>
+                            <li>中医四诊流程训练</li>
+                            <li>问诊策略专家系统</li>
+                        </ul>
+                        <a href="https://raymondlit.github.io/chinesemedicine/%E5%B2%90%E9%BB%84%E5%A4%A9%E4%BD%BF%20-%20%E4%B8%AD%E5%8C%BB%E8%99%9A%E6%8B%9F%E9%97%AE%E8%AF%8A%E8%AE%AD%E7%BB%83%E7%B3%BB%E7%BB%9F--%E7%99%BE%E7%97%85%E6%A1%88%E7%89%88.html" class="tool-button">
+                            <i class="fas fa-play-circle"></i> 启动工具
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- AI智能体 - 护理天使专业版 -->
+                <div class="tool-card">
+                    <div class="tool-image" style="background: linear-gradient(45deg, #2a7cc7, #1a5276);">
+                        <div class="tool-title">护理天使专业版</div>
+                    </div>
+                    <div class="tool-content">
+                        <p class="tool-description">
+                            专业护理辅助系统，为护理专业学生和从业人员提供临床决策支持、护理方案制定、病例分析和护理技能训练等功能。
+                        </p>
+                        <ul class="tool-features">
+                            <li>临床护理决策支持系统</li>
+                            <li>护理方案智能生成</li>
+                            <li>真实护理病例分析</li>
+                            <li>护理操作模拟训练</li>
+                            <li>护理知识库查询</li>
+                        </ul>
+                        <a href="https://raymondlit.github.io/chinesemedicine/AI%E6%99%BA%E8%83%BD%E4%BD%93%20-%20%E6%8A%A4%E7%90%86%E5%A4%A9%E4%BD%BF%E4%B8%93%E4%B8%9A%E7%89%88.html" class="tool-button">
+                            <i class="fas fa-play-circle"></i> 启动工具
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="add-tool-section">
+            <h2 class="add-tool-title">
+                <i class="fas fa-plus-circle"></i>
+                添加新工具
+            </h2>
+            
+            <form id="addToolForm">
+                <div class="form-group">
+                    <label for="toolName"><i class="fas fa-toolbox"></i> 工具名称</label>
+                    <input type="text" id="toolName" placeholder="请输入工具名称" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="toolUrl"><i class="fas fa-link"></i> 工具URL</label>
+                    <input type="url" id="toolUrl" placeholder="请输入工具完整URL" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="toolDescription"><i class="fas fa-align-left"></i> 工具描述</label>
+                    <textarea id="toolDescription" placeholder="请简要描述工具的功能和特点..." required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-plus"></i> 添加新工具
+                </button>
+            </form>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 河南中医药大学 - AI智能体平台 | 人工智能与信息技术学院</p>
+            <p>地址：河南省郑州市金水东路156号 | 电话：0371-12345678</p>
+            <p>技术支持：<a href="mailto:ai_support@hactcm.edu.cn">ai_support@hactcm.edu.cn</a></p>
+        </div>
+    </div>
+
+    <script>
+        // 工具数据库
+        let tools = [
+            {
+                name: "岐黄天使",
+                url: "https://raymondlit.github.io/chinesemedicine/%E5%B2%90%E9%BB%84%E5%A4%A9%E4%BD%BF%20-%20%E4%B8%AD%E5%8C%BB%E8%99%9A%E6%8B%9F%E9%97%AE%E8%AF%8A%E8%AE%AD%E7%BB%83%E7%B3%BB%E7%BB%9F--%E7%99%BE%E7%97%85%E6%A1%88%E7%89%88.html",
+                description: "中医虚拟问诊训练系统，提供100个精选中医病案，涵盖内科、妇科、儿科等各类疾病。学生可通过模拟问诊实践，提升中医辨证论治能力。",
+                features: [
+                    "100个真实中医病案场景",
+                    "中医辨证分型指导",
+                    "虚拟患者智能对话",
+                    "中医四诊流程训练",
+                    "问诊策略专家系统"
+                ],
+                color: "linear-gradient(45deg, #1a535c, #4a8c55)"
+            },
+            {
+                name: "护理天使专业版",
+                url: "https://raymondlit.github.io/chinesemedicine/AI%E6%99%BA%E8%83%BD%E4%BD%93%20-%20%E6%8A%A4%E7%90%86%E5%A4%A9%E4%BD%BF%E4%B8%93%E4%B8%9A%E7%89%88.html",
+                description: "专业护理辅助系统，为护理专业学生和从业人员提供临床决策支持、护理方案制定、病例分析和护理技能训练等功能。",
+                features: [
+                    "临床护理决策支持系统",
+                    "护理方案智能生成",
+                    "真实护理病例分析",
+                    "护理操作模拟训练",
+                    "护理知识库查询"
+                ],
+                color: "linear-gradient(45deg, #2a7cc7, #1a5276)"
+            }
+        ];
+        
+        // DOM元素
+        const toolsContainer = document.getElementById('toolsContainer');
+        const addToolForm = document.getElementById('addToolForm');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        
+        // 初始化工具列表
+        function renderTools() {
+            toolsContainer.innerHTML = '';
+            
+            tools.forEach(tool => {
+                const toolCard = document.createElement('div');
+                toolCard.className = 'tool-card';
+                
+                toolCard.innerHTML = `
+                    <div class="tool-image" style="background: ${tool.color};">
+                        <div class="tool-title">${tool.name}</div>
+                    </div>
+                    <div class="tool-content">
+                        <p class="tool-description">${tool.description}</p>
+                        <ul class="tool-features">
+                            ${tool.features.map(feature => `<li>${feature}</li>`).join('')}
+                        </ul>
+                        <a href="${tool.url}" class="tool-button">
+                            <i class="fas fa-play-circle"></i> 启动工具
+                        </a>
+                    </div>
+                `;
+                
+                toolsContainer.appendChild(toolCard);
+            });
+        }
+        
+        // 添加新工具
+        addToolForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const toolName = document.getElementById('toolName').value;
+            const toolUrl = document.getElementById('toolUrl').value;
+            const toolDescription = document.getElementById('toolDescription').value;
+            
+            // 创建新工具对象
+            const newTool = {
+                name: toolName,
+                url: toolUrl,
+                description: toolDescription,
+                features: ["智能交互系统", "专业领域支持", "数据分析功能", "用户友好界面"],
+                color: "linear-gradient(45deg, #d4af37, #c3272b)"
+            };
+            
+            // 添加到工具数组
+            tools.push(newTool);
+            
+            // 重新渲染工具列表
+            renderTools();
+            
+            // 显示通知
+            notificationText.textContent = `"${toolName}" 已成功添加到平台！`;
+            notification.classList.add('show');
+            
+            // 重置表单
+            addToolForm.reset();
+            
+            // 3秒后隐藏通知
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        });
+        
+        // 初始渲染
+        renderTools();
+    </script>
+</body>
+</html>
