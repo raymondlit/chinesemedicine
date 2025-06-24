@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>岐黄天使 - 中医虚拟问诊训练系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        :root {
+            --primary: #2a7cc7;
+            --secondary: #1a535c;
+            --accent: #d4af37;
+            --tcm-red: #c3272b;
+            --tcm-green: #4a8c55;
+            --light: #f7f3e9;
+            --dark: #2c2416;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --tcm-blue: #1a5276;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f5f5f5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background: linear-gradient(to right, var(--tcm-green), var(--tcm-blue));
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo i {
+            font-size: 2.8rem;
+            color: var(--accent);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .stat-item i {
+            margin-right: 5px;
+            color: var(--accent);
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 20px;
+            padding: 25px;
+        }
+        
+        /* 病人信息侧边栏 */
+        .patient-sidebar {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: relative;
+        }
+        
+        .patient-selector {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .patient-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--tcm-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .patient-selector select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            font-size: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a8c55' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+        
+        .patient-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .patient-avatar {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--tcm-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .patient-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .patient-meta {
+            display: flex;
+            gap: 15px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+        
+        .patient-details {
+            margin-top: 20px;
+        }
+        
+        .detail-item {
+            margin-bottom: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .detail-item h4 {
+            color: var(--tcm-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.15rem;
+        }
+        
+        .symptoms-list {
+            background: rgba(74, 140, 85, 0.08);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .symptom-tag {
+            display: inline-block;
+            background: linear-gradient(to right, var(--tcm-red), #d64545);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* 问诊区域 */
+        .consultation-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .strategy-selector {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.35rem;
+            color: var(--tcm-blue);
+            margin-bottom: 15px;
+        }
+        
+        .strategy-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .option-card {
+            background: var(--light);
+            padding: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-card.active {
+            border-color: var(--tcm-green);
+            background: rgba(74, 140, 85, 0.08);
+            box-shadow: 0 0 0 3px rgba(74, 140, 85, 0.2);
+        }
+        
+        .option-card h5 {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        
+        .option-card p {
+            font-size: 0.95rem;
+            color: #555;
+        }
+        
+        .chat-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            background: linear-gradient(to right, var(--primary), var(--tcm-blue));
+            color: white;
+            padding: 16px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+        }
+        
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            background: #fafafa;
+            min-height: 450px;
+            max-height: 550px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.04"><path d="M20,20 Q40,5 60,20 T100,20 M20,60 Q40,45 60,60 T100,60" stroke="%234a8c55" fill="none" stroke-width="1"/></svg>');
+            background-size: 120px;
+        }
+        
+        .message {
+            max-width: 85%;
+            padding: 18px 20px;
+            border-radius: 18px;
+            animation: fadeIn 0.3s ease;
+            position: relative;
+            line-height: 1.65;
+            font-size: 1.05rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background: linear-gradient(to right, var(--primary), #2e8bc0);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .bot-message {
+            background: white;
+            border: 1px solid #e0e0e0;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        }
+        
+        .bot-message h4 {
+            color: var(--tcm-green);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.15rem;
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 18px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            gap: 12px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        input:focus {
+            border-color: var(--tcm-green);
+            box-shadow: 0 0 0 3px rgba(74, 140, 85, 0.2);
+        }
+        
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 30px;
+            background: var(--tcm-green);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 8px rgba(74, 140, 85, 0.3);
+        }
+        
+        button:hover {
+            background: var(--tcm-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(26, 82, 118, 0.4);
+        }
+        
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 20px 5px;
+        }
+        
+        .quick-q {
+            background: #e8f5e9;
+            color: var(--tcm-green);
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .quick-q:hover {
+            background: #c8e6c9;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* 专家配置面板 */
+        .expert-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .expert-panel.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        textarea, select, input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .tcm-tabs {
+            display: flex;
+            background: #f5f7fa;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .tcm-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tcm-tab.active {
+            background: var(--tcm-green);
+            color: white;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .patient-sidebar {
+                order: 2;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .strategy-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stats-bar {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .patient-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .patient-meta {
+                justify-content: center;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--success);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .tcm-flow {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 40px;
+            position: relative;
+        }
+        
+        .flow-step {
+            text-align: center;
+            z-index: 2;
+            flex: 1;
+        }
+        
+        .step-icon {
+            width: 55px;
+            height: 55px;
+            background: var(--tcm-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .tcm-flow::before {
+            content: '';
+            position: absolute;
+            top: 27px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: var(--tcm-green);
+            z-index: 1;
+        }
+        
+        .disease-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        
+        .category-tag {
+            background: #e1f5fe;
+            color: var(--tcm-blue);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .floating-bg {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.05;
+            font-size: 20rem;
+            color: var(--tcm-green);
+        }
+        
+        .floating-bg:nth-child(1) {
+            top: 5%;
+            left: 5%;
+            transform: rotate(-15deg);
+        }
+        
+        .floating-bg:nth-child(2) {
+            bottom: 10%;
+            right: 5%;
+            transform: rotate(25deg);
+        }
+        
+        .patient-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-bg">
+        <i class="fas fa-leaf"></i>
+    </div>
+    <div class="floating-bg">
+        <i class="fas fa-heartbeat"></i>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>成功加载100个中医病案！开始您的问诊训练吧</span>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <h1>岐黄天使 · 百病案版</h1>
+            </div>
+            <p class="subtitle">中医虚拟问诊训练系统 - 传承千年智慧，培养问诊技艺</p>
+            
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <i class="fas fa-user-injured"></i> 100个精选病案
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-procedures"></i> 12类疾病系统
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-brain"></i> 智能辨证模型
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-book-medical"></i> 中医知识库
+                </div>
+            </div>
+        </div>
+        
+        <div class="disease-categories">
+            <div class="category-tag">内科</div>
+            <div class="category-tag">妇科</div>
+            <div class="category-tag">儿科</div>
+            <div class="category-tag">外科</div>
+            <div class="category-tag">骨伤科</div>
+            <div class="category-tag">皮肤科</div>
+            <div class="category-tag">五官科</div>
+            <div class="category-tag">老年病</div>
+        </div>
+        
+        <div class="tcm-flow">
+            <div class="flow-step">
+                <div class="step-icon">1</div>
+                <div>望闻问切</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-icon">2</div>
+                <div>辨证分型</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-icon">3</div>
+                <div>病因病机</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-icon">4</div>
+                <div>治则治法</div>
+            </div>
+            <div class="flow-step">
+                <div class="step-icon">5</div>
+                <div>方药针灸</div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- 病人信息侧边栏 -->
+            <div class="patient-sidebar">
+                <div class="patient-selector">
+                    <label for="patientSelector"><i class="fas fa-user-injured"></i> 选择病案 (100个精选病例)</label>
+                    <select id="patientSelector">
+                        <option value="0">张明华 - 头痛眩晕失眠 (肝阳上亢)</option>
+                        <option value="1">李丽娟 - 胃痛腹胀反酸 (肝胃不和)</option>
+                        <option value="2">王建国 - 关节疼痛僵硬 (寒湿痹阻)</option>
+                        <option value="3">陈小燕 - 咳嗽气短胸闷 (风热犯肺)</option>
+                        <option value="4">刘伟 - 腰膝酸软耳鸣 (肾精不足)</option>
+                        <option value="5">赵红梅 - 月经不调痛经 (肝郁气滞)</option>
+                        <option value="6">周明 - 失眠多梦健忘 (心脾两虚)</option>
+                        <option value="7">吴芳 - 皮肤瘙痒湿疹 (湿热浸淫)</option>
+                        <option value="8">郑涛 - 胸闷心悸气短 (心脉瘀阻)</option>
+                        <option value="9">孙倩 - 食欲不振消瘦 (脾胃虚弱)</option>
+                        <option value="10">马强 - 便秘腹胀口臭 (胃肠实热)</option>
+                        <option value="11">林雪 - 头晕眼花乏力 (气血两虚)</option>
+                        <option value="12">杨帆 - 盗汗五心烦热 (阴虚火旺)</option>
+                        <option value="13">徐海 - 阳痿早泄遗精 (肾阳虚衰)</option>
+                        <option value="14">朱琳 - 带下黄稠阴痒 (湿热下注)</option>
+                        <option value="15">郭伟 - 下肢浮肿尿少 (脾肾阳虚)</option>
+                        <option value="16">黄敏 - 更年期综合征 (肝肾阴虚)</option>
+                        <option value="17">高翔 - 高血压眩晕 (肝风内动)</option>
+                        <option value="18">钱芳 - 慢性腹泻 (脾胃虚寒)</option>
+                        <option value="19">孙强 - 糖尿病消渴 (气阴两虚)</option>
+                    </select>
+                </div>
+                
+                <div class="patient-header">
+                    <div class="patient-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="patient-info">
+                        <h3 id="patientName">张明华</h3>
+                        <div class="patient-meta">
+                            <span><i class="fas fa-venus"></i> <span id="patientGender">男性</span></span>
+                            <span><i class="fas fa-birthday-cake"></i> <span id="patientAge">52岁</span></span>
+                            <span><i class="fas fa-briefcase"></i> <span id="patientOccupation">教师</span></span>
+                        </div>
+                        <div class="patient-counter">病案ID: TC2024001</div>
+                    </div>
+                </div>
+                
+                <div class="patient-details">
+                    <div class="detail-item">
+                        <h4><i class="fas fa-heartbeat"></i> 主诉症状</h4>
+                        <div class="symptoms-list" id="symptomsList">
+                            <span class="symptom-tag">反复头痛</span>
+                            <span class="symptom-tag">眩晕</span>
+                            <span class="symptom-tag">失眠</span>
+                            <span class="symptom-tag">乏力</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <h4><i class="fas fa-history"></i> 病程时间</h4>
+                        <p id="diseaseDuration">头痛反复发作3年余，加重伴眩晕1个月</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <h4><i class="fas fa-stethoscope"></i> 已接受治疗</h4>
+                        <p id="treatmentHistory">服用西药止痛片可暂时缓解，但效果逐渐减弱</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <h4><i class="fas fa-clipboard-list"></i> 体质特征</h4>
+                        <p id="physicalFeatures">体型偏瘦，面色无华，舌淡苔薄白，脉弦细</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <h4><i class="fas fa-lightbulb"></i> 问诊提示</h4>
+                        <p id="consultationTips">重点询问头痛性质、发作时间、诱发因素、伴随症状、睡眠质量、情绪状态及二便情况</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 问诊区域 -->
+            <div class="consultation-area">
+                <div class="strategy-selector">
+                    <h3 class="section-title"><i class="fas fa-cogs"></i> 问诊策略选择</h3>
+                    <p>根据患者性别、年龄和体质特征选择合适的问诊策略：</p>
+                    
+                    <div class="strategy-options">
+                        <div class="option-card active">
+                            <h5>肝阳上亢型策略</h5>
+                            <p>重点询问头痛性质、情绪波动、睡眠质量、眩晕特点</p>
+                        </div>
+                        <div class="option-card">
+                            <h5>气血亏虚型策略</h5>
+                            <p>重点询问疲劳程度、食欲、面色、月经(女)、二便情况</p>
+                        </div>
+                        <div class="option-card">
+                            <h5>痰湿内阻型策略</h5>
+                            <p>重点询问头重感、胸闷、痰多、食欲、二便黏腻情况</p>
+                        </div>
+                        <div class="option-card">
+                            <h5>肾精不足型策略</h5>
+                            <p>重点询问腰膝酸软、耳鸣、记忆力、性功能状况</p>
+                        </div>
+                    </div>
+                    
+                    <button style="margin-top: 20px;" id="expertToggle">
+                        <i class="fas fa-user-md"></i> 专家介入配置问诊策略
+                    </button>
+                </div>
+                
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <i class="fas fa-comments"></i>
+                        <span>虚拟问诊会话 - 请使用中医专业术语进行问诊</span>
+                    </div>
+                    <div class="messages" id="messageContainer">
+                        <div class="message bot-message">
+                            <h4><i class="fas fa-robot"></i> 虚拟患者</h4>
+                            <p>大夫您好！我这头痛的老毛病又犯了，最近一个月还经常头晕，晚上也睡不好。</p>
+                        </div>
+                        <div class="message user-message">
+                            <p>请问您的头痛具体在哪个部位？是胀痛、刺痛还是其他性质的疼痛？</p>
+                        </div>
+                        <div class="message bot-message">
+                            <h4><i class="fas fa-robot"></i> 虚拟患者</h4>
+                            <p>主要在两侧太阳穴位置，像是血管跳着疼的那种胀痛，特别是生气或者劳累的时候更明显。</p>
+                        </div>
+                        <div class="message user-message">
+                            <p>头痛发作有没有特定时间？比如早晨、午后或夜间？</p>
+                        </div>
+                        <div class="message bot-message">
+                            <h4><i class="fas fa-robot"></i> 虚拟患者</h4>
+                            <p>多在下午开始，到晚上更厉害些。早晨起来感觉还好。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-questions">
+                        <div class="quick-q">头痛的性质是怎样的？</div>
+                        <div class="quick-q">睡眠情况如何？</div>
+                        <div class="quick-q">大小便是否正常？</div>
+                        <div class="quick-q">情绪状态如何？</div>
+                        <div class="quick-q">食欲和口味有什么变化？</div>
+                    </div>
+                    
+                    <div class="input-area">
+                        <input type="text" id="userInput" placeholder="请输入您要询问的问题...">
+                        <button id="sendBtn"><i class="fas fa-paper-plane"></i> 发送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 专家配置面板 -->
+        <div class="expert-panel" id="expertPanel">
+            <h3 class="section-title"><i class="fas fa-user-md"></i> 专家问诊策略配置</h3>
+            
+            <div class="tcm-tabs">
+                <div class="tcm-tab active">基本问诊</div>
+                <div class="tcm-tab">辨证扩展</div>
+                <div class="tcm-tab">体质差异</div>
+            </div>
+            
+            <div class="form-group">
+                <label>问诊策略名称</label>
+                <input type="text" placeholder="例如：肝阳上亢型头痛问诊策略">
+            </div>
+            
+            <div class="form-group">
+                <label>适用人群</label>
+                <select>
+                    <option>中年男性</option>
+                    <option>老年女性</option>
+                    <option>青少年</option>
+                    <option>孕产妇</option>
+                    <option>体力劳动者</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>核心问诊流程</label>
+                <textarea placeholder="输入问诊流程和关键问题，例如：
+1. 首先询问头痛性质(胀痛/刺痛/空痛)
+2. 询问发作时间(晨起/午后/夜间)
+3. 了解情绪相关症状(烦躁易怒/抑郁)
+4. 询问伴随症状(眩晕/耳鸣/面红)
+5. 了解二便情况(便秘/尿黄)...">1. 询问头痛具体部位和性质（胀痛、刺痛或空痛）
+2. 了解发作时间和诱发因素（情绪、劳累、天气）
+3. 询问伴随症状（眩晕、耳鸣、面红目赤）
+4. 了解睡眠情况（入睡困难、多梦易醒）
+5. 询问情绪状态（烦躁易怒、抑郁焦虑）
+6. 了解二便情况（便秘、尿黄）
+7. 询问食欲和口味变化（口苦、咽干）</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>中医辨证要点</label>
+                <textarea placeholder="输入辨证要点，例如：
+- 头痛而胀，面红目赤 → 肝阳上亢
+- 头痛如裹，胸闷脘痞 → 痰浊上扰
+- 头痛隐隐，遇劳加重 → 气血亏虚">- 头胀痛，眩晕，面红目赤 → 肝阳上亢
+- 头痛如裹，胸闷痰多 → 痰浊上扰
+- 头痛隐隐，遇劳加重 → 气血亏虚
+- 头痛且空，腰膝酸软 → 肾精不足
+- 头痛如刺，痛处固定 → 瘀血阻络</textarea>
+            </div>
+            
+            <div class="actions">
+                <button class="btn-secondary">取消</button>
+                <button class="btn-success">保存策略</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 病人数据库 (示例20个，可扩展至100个)
+        const patients = [
+            {
+                id: 0,
+                name: "张明华",
+                gender: "男性",
+                age: "52岁",
+                occupation: "教师",
+                symptoms: ["反复头痛", "眩晕", "失眠", "乏力"],
+                diseaseDuration: "头痛反复发作3年余，加重伴眩晕1个月",
+                treatmentHistory: "服用西药止痛片可暂时缓解，但效果逐渐减弱",
+                physicalFeatures: "体型偏瘦，面色无华，舌淡苔薄白，脉弦细",
+                consultationTips: "重点询问头痛性质、发作时间、诱发因素、伴随症状、睡眠质量、情绪状态及二便情况",
+                initialMessage: "大夫您好！我这头痛的老毛病又犯了，最近一个月还经常头晕，晚上也睡不好。",
+                strategy: "肝阳上亢型策略"
+            },
+            {
+                id: 1,
+                name: "李丽娟",
+                gender: "女性",
+                age: "38岁",
+                occupation: "会计",
+                symptoms: ["胃脘胀痛", "反酸嗳气", "食欲不振", "大便不调"],
+                diseaseDuration: "胃痛反复发作2年，加重1周",
+                treatmentHistory: "曾服用奥美拉唑等药物，效果不稳定",
+                physicalFeatures: "体型适中，舌淡红苔白腻，脉弦滑",
+                consultationTips: "重点询问疼痛性质、饮食关系、情绪影响、大便情况、口味变化",
+                initialMessage: "医生您好，我胃痛已经两年了，最近一周特别难受，吃不下饭，还经常反酸。",
+                strategy: "肝胃不和型策略"
+            },
+            {
+                id: 2,
+                name: "王建国",
+                gender: "男性",
+                age: "65岁",
+                occupation: "退休工人",
+                symptoms: ["关节疼痛", "晨僵", "活动受限", "畏寒怕冷"],
+                diseaseDuration: "关节痛反复发作8年，冬季加重",
+                treatmentHistory: "曾服用多种止痛药和膏药，效果逐渐减弱",
+                physicalFeatures: "体型偏胖，舌淡苔白滑，脉沉细",
+                consultationTips: "重点询问疼痛部位、性质、与天气关系、畏寒情况、二便情况",
+                initialMessage: "大夫，我关节痛好多年了，尤其冬天特别难受，早上起来关节都僵硬。",
+                strategy: "寒湿痹阻型策略"
+            },
+            {
+                id: 3,
+                name: "陈小燕",
+                gender: "女性",
+                age: "28岁",
+                occupation: "设计师",
+                symptoms: ["咳嗽有痰", "胸闷气短", "咽喉不适", "乏力"],
+                diseaseDuration: "咳嗽反复发作3个月，加重1周",
+                treatmentHistory: "服用抗生素和止咳药效果不佳",
+                physicalFeatures: "体型偏瘦，舌红苔薄黄，脉细数",
+                consultationTips: "重点询问咳嗽性质、痰液特点、发作时间、咽痒情况、有无发热",
+                initialMessage: "医生，我已经咳嗽三个月了，最近一周更厉害了，特别是晚上，还有胸闷的感觉。",
+                strategy: "风热犯肺型策略"
+            },
+            {
+                id: 4,
+                name: "刘伟",
+                gender: "男性",
+                age: "45岁",
+                occupation: "程序员",
+                symptoms: ["腰膝酸软", "耳鸣", "记忆力减退", "性功能下降"],
+                diseaseDuration: "腰部不适5年，加重伴耳鸣半年",
+                treatmentHistory: "曾尝试推拿按摩，效果短暂",
+                physicalFeatures: "体型偏瘦，舌淡苔少，脉沉细",
+                consultationTips: "重点询问腰部感觉、耳鸣特点、睡眠质量、二便情况、性生活",
+                initialMessage: "大夫，我腰酸背痛好几年了，最近半年耳鸣得厉害，记性也变差了。",
+                strategy: "肾精不足型策略"
+            },
+            {
+                id: 5,
+                name: "赵红梅",
+                gender: "女性",
+                age: "32岁",
+                occupation: "护士",
+                symptoms: ["月经不调", "痛经", "乳房胀痛", "情绪波动"],
+                diseaseDuration: "月经不调3年，痛经加重半年",
+                treatmentHistory: "服用止痛药和激素类药物，效果不佳",
+                physicalFeatures: "体型适中，舌暗有瘀点，脉弦涩",
+                consultationTips: "重点询问月经周期、经量、颜色、痛经性质、情绪变化、乳房状况",
+                initialMessage: "医生，我月经一直不规律，最近半年痛经特别严重，来之前乳房胀得难受。",
+                strategy: "肝郁气滞型策略"
+            },
+            {
+                id: 6,
+                name: "周明",
+                gender: "男性",
+                age: "50岁",
+                occupation: "经理",
+                symptoms: ["失眠多梦", "心悸健忘", "头晕目眩", "食欲不振"],
+                diseaseDuration: "失眠反复发作5年，加重2个月",
+                treatmentHistory: "服用安眠药效果递减，且有依赖性",
+                physicalFeatures: "面色萎黄，舌淡苔薄白，脉细弱",
+                consultationTips: "重点询问入睡情况、梦境内容、心悸特点、记忆力变化、饮食情况",
+                initialMessage: "大夫，我失眠五年了，最近两个月几乎整夜睡不着，白天头昏脑胀的。",
+                strategy: "心脾两虚型策略"
+            },
+            {
+                id: 7,
+                name: "吴芳",
+                gender: "女性",
+                age: "40岁",
+                occupation: "销售",
+                symptoms: ["皮肤瘙痒", "红色丘疹", "渗液结痂", "口干口苦"],
+                diseaseDuration: "皮肤问题反复发作1年，加重2周",
+                treatmentHistory: "使用多种药膏，停药即复发",
+                physicalFeatures: "体型偏胖，舌红苔黄腻，脉滑数",
+                consultationTips: "重点询问瘙痒特点、皮损形态、发作季节、饮食影响、二便情况",
+                initialMessage: "医生，我皮肤瘙痒一年了，最近两周特别厉害，起了很多红疹子，还流水。",
+                strategy: "湿热浸淫型策略"
+            },
+            {
+                id: 8,
+                name: "郑涛",
+                gender: "男性",
+                age: "58岁",
+                occupation: "公务员",
+                symptoms: ["胸闷心悸", "气短乏力", "头晕", "自汗"],
+                diseaseDuration: "心悸胸闷反复发作3年，加重1个月",
+                treatmentHistory: "服用西药控制，但仍有不适感",
+                physicalFeatures: "体型偏瘦，舌淡紫有瘀斑，脉结代",
+                consultationTips: "重点询问心悸特点、胸闷程度、活动影响、出汗情况、睡眠质量",
+                initialMessage: "大夫，我经常感觉胸闷心慌，特别是上楼梯的时候，气都喘不上来。",
+                strategy: "心脉瘀阻型策略"
+            },
+            {
+                id: 9,
+                name: "孙倩",
+                gender: "女性",
+                age: "26岁",
+                occupation: "研究生",
+                symptoms: ["食欲不振", "体重下降", "倦怠乏力", "大便溏薄"],
+                diseaseDuration: "食欲减退半年，体重减轻5kg",
+                treatmentHistory: "服用消化酶等药物效果不显",
+                physicalFeatures: "体型消瘦，面色萎黄，舌淡胖有齿痕，脉濡弱",
+                consultationTips: "重点询问饮食习惯、口味变化、大便情况、精神压力、睡眠质量",
+                initialMessage: "医生，我这半年一点胃口都没有，体重掉了10斤，整天没力气。",
+                strategy: "脾胃虚弱型策略"
+            },
+            {
+                id: 10,
+                name: "马强",
+                gender: "男性",
+                age: "35岁",
+                occupation: "厨师",
+                symptoms: ["便秘", "腹胀", "口臭", "痤疮"],
+                diseaseDuration: "便秘反复发作2年，加重1个月",
+                treatmentHistory: "依赖泻药排便，效果越来越差",
+                physicalFeatures: "体型壮实，面色红赤，舌红苔黄燥，脉滑数",
+                consultationTips: "重点询问大便性状、排便间隔、腹胀程度、饮食习惯、口渴情况",
+                initialMessage: "大夫，我便秘两年了，最近一个月特别严重，肚子胀得难受，还有口臭。",
+                strategy: "胃肠实热型策略"
+            },
+            {
+                id: 11,
+                name: "林雪",
+                gender: "女性",
+                age: "70岁",
+                occupation: "退休教师",
+                symptoms: ["头晕眼花", "倦怠乏力", "面色苍白", "心悸失眠"],
+                diseaseDuration: "头晕反复发作10年，加重3个月",
+                treatmentHistory: "服用降压药和补血药，效果不佳",
+                physicalFeatures: "体型偏瘦，面色苍白，舌淡苔薄白，脉细弱",
+                consultationTips: "重点询问头晕性质、发作时间、乏力程度、心悸特点、饮食情况",
+                initialMessage: "医生，我头晕好多年了，最近三个月特别厉害，整天没精神，脸色也不好。",
+                strategy: "气血两虚型策略"
+            },
+            {
+                id: 12,
+                name: "杨帆",
+                gender: "男性",
+                age: "48岁",
+                occupation: "工程师",
+                symptoms: ["盗汗", "五心烦热", "口干咽燥", "腰膝酸软"],
+                diseaseDuration: "夜间盗汗反复发作2年，加重3个月",
+                treatmentHistory: "服用六味地黄丸等效果不显",
+                physicalFeatures: "体型偏瘦，颧红，舌红少苔，脉细数",
+                consultationTips: "重点询问出汗时间、发热特点、睡眠质量、性生活、二便情况",
+                initialMessage: "大夫，我晚上睡觉出汗特别厉害，手脚心发热，口干得厉害。",
+                strategy: "阴虚火旺型策略"
+            },
+            {
+                id: 13,
+                name: "徐海",
+                gender: "男性",
+                age: "42岁",
+                occupation: "司机",
+                symptoms: ["阳痿早泄", "遗精", "畏寒肢冷", "腰膝酸软"],
+                diseaseDuration: "性功能障碍3年，加重半年",
+                treatmentHistory: "服用补肾药物效果不稳定",
+                physicalFeatures: "体型适中，面色㿠白，舌淡苔白，脉沉弱",
+                consultationTips: "重点询问性功能状况、晨勃情况、畏寒程度、腰部感觉、二便情况",
+                initialMessage: "医生，我最近几年性功能越来越差，还经常遗精，腰酸怕冷。",
+                strategy: "肾阳虚衰型策略"
+            },
+            {
+                id: 14,
+                name: "朱琳",
+                gender: "女性",
+                age: "34岁",
+                occupation: "文员",
+                symptoms: ["带下黄稠", "外阴瘙痒", "小便短赤", "口苦咽干"],
+                diseaseDuration: "带下异常1年，加重1个月",
+                treatmentHistory: "使用洗剂效果短暂",
+                physicalFeatures: "体型微胖，舌红苔黄腻，脉滑数",
+                consultationTips: "重点询问带下量、色、质、气味、瘙痒程度、二便情况",
+                initialMessage: "大夫，我白带特别多，颜色发黄，外阴瘙痒得厉害，小便也黄。",
+                strategy: "湿热下注型策略"
+            },
+            {
+                id: 15,
+                name: "郭伟",
+                gender: "男性",
+                age: "67岁",
+                occupation: "退休",
+                symptoms: ["下肢浮肿", "尿少", "腰膝冷痛", "畏寒肢冷"],
+                diseaseDuration: "下肢浮肿反复发作3年，加重1个月",
+                treatmentHistory: "服用利尿剂效果不稳定",
+                physicalFeatures: "体型虚胖，面色晄白，舌淡胖苔白滑，脉沉迟",
+                consultationTips: "重点询问水肿特点、小便情况、畏寒程度、腰部感觉、大便情况",
+                initialMessage: "医生，我这两条腿肿了好几年了，最近肿得更厉害，小便也少，特别怕冷。",
+                strategy: "脾肾阳虚型策略"
+            },
+            {
+                id: 16,
+                name: "黄敏",
+                gender: "女性",
+                age: "52岁",
+                occupation: "教师",
+                symptoms: ["潮热盗汗", "心烦失眠", "头晕耳鸣", "月经紊乱"],
+                diseaseDuration: "更年期症状2年，加重半年",
+                treatmentHistory: "服用激素替代治疗，效果不佳",
+                physicalFeatures: "体型适中，舌红少苔，脉细数",
+                consultationTips: "重点询问潮热特点、出汗情况、情绪变化、睡眠质量、二便情况",
+                initialMessage: "大夫，我这两年经常一阵阵发热出汗，心烦睡不着，月经也不规律了。",
+                strategy: "肝肾阴虚型策略"
+            },
+            {
+                id: 17,
+                name: "高翔",
+                gender: "男性",
+                age: "60岁",
+                occupation: "退休干部",
+                symptoms: ["高血压", "头晕头胀", "面红目赤", "烦躁易怒"],
+                diseaseDuration: "高血压10年，头晕加重3个月",
+                treatmentHistory: "服用降压药，效果不稳定",
+                physicalFeatures: "体型偏胖，面色红赤，舌红苔黄，脉弦劲",
+                consultationTips: "重点询问头晕性质、血压波动、情绪影响、睡眠质量、二便情况",
+                initialMessage: "医生，我高血压十年了，最近三个月头晕得厉害，脸发热，容易发脾气。",
+                strategy: "肝风内动型策略"
+            },
+            {
+                id: 18,
+                name: "钱芳",
+                gender: "女性",
+                age: "45岁",
+                occupation: "个体户",
+                symptoms: ["慢性腹泻", "腹部冷痛", "食欲不振", "四肢不温"],
+                diseaseDuration: "腹泻反复发作5年，加重2个月",
+                treatmentHistory: "服用止泻药效果短暂",
+                physicalFeatures: "体型消瘦，面色萎黄，舌淡苔白，脉沉迟",
+                consultationTips: "重点询问大便性状、腹痛特点、饮食影响、畏寒情况、四肢温度",
+                initialMessage: "大夫，我拉肚子五年了，最近两个月每天3-4次，肚子冷痛，不想吃饭。",
+                strategy: "脾胃虚寒型策略"
+            },
+            {
+                id: 19,
+                name: "孙强",
+                gender: "男性",
+                age: "55岁",
+                occupation: "企业主",
+                symptoms: ["多饮多尿", "体重下降", "倦怠乏力", "手足心热"],
+                diseaseDuration: "糖尿病史8年，症状加重半年",
+                treatmentHistory: "服用降糖药，血糖控制不佳",
+                physicalFeatures: "体型消瘦，舌红少津，苔薄黄，脉细数",
+                consultationTips: "重点询问饮水量、尿量、体重变化、乏力程度、手足感觉",
+                initialMessage: "医生，我糖尿病八年了，最近半年特别口渴，尿多，瘦了20斤，没力气。",
+                strategy: "气阴两虚型策略"
+            }
+        ];
+
+        // 中医问诊知识库
+        const tcmKnowledge = {
+            "头痛": {
+                questions: [
+                    "请问您的头痛具体在哪个部位？（前额/两侧/巅顶/后枕）",
+                    "头痛的性质是怎样的？（胀痛/刺痛/空痛/重痛）",
+                    "头痛发作有没有特定时间？（晨起/午后/夜间）",
+                    "什么情况下头痛会加重或缓解？",
+                    "是否伴有其他症状？（眩晕/恶心/呕吐/视力变化）"
+                ],
+                responses: [
+                    "主要在两侧太阳穴位置",
+                    "像是血管跳着疼的那种胀痛",
+                    "下午开始，到晚上更厉害些",
+                    "生气或者劳累的时候更明显",
+                    "有时会头晕，特别是突然站起来的时候"
+                ]
+            },
+            "睡眠": {
+                questions: [
+                    "您的睡眠情况如何？",
+                    "需要多长时间才能入睡？",
+                    "夜间会醒来吗？醒后是否容易再入睡？",
+                    "早晨醒来是否感觉精力恢复？",
+                    "是否多梦？梦境内容如何？"
+                ],
+                responses: [
+                    "最近一个月很难入睡",
+                    "躺在床上要1-2小时才能睡着",
+                    "经常半夜2-3点醒来，之后就很难再睡着",
+                    "早晨起来感觉很累，像没睡过一样",
+                    "经常做紧张的梦，比如被追赶或考试"
+                ]
+            },
+            "饮食": {
+                questions: [
+                    "食欲如何？",
+                    "是否有特别想吃的口味？（酸/甜/苦/辣/咸）",
+                    "饭后有无不适感？"
+                ],
+                responses: [
+                    "食欲不太好，没什么胃口",
+                    "有时会口苦，特别是早晨",
+                    "最近特别想吃酸的东西",
+                    "饭后常感觉胃胀不舒服"
+                ]
+            },
+            "二便": {
+                questions: [
+                    "大便情况如何？（次数/形状/颜色）",
+                    "小便情况如何？（颜色/次数/量）",
+                    "有无特殊不适感？"
+                ],
+                responses: [
+                    "大便偏干，2-3天一次",
+                    "小便偏黄，特别是喝水少的时候",
+                    "夜尿1-2次，影响睡眠"
+                ]
+            },
+            "情绪": {
+                questions: [
+                    "最近情绪状态如何？",
+                    "是否容易生气或烦躁？",
+                    "有什么特别担心或焦虑的事情吗？"
+                ],
+                responses: [
+                    "最近工作压力大，经常觉得烦躁",
+                    "小事就容易发脾气，事后又后悔",
+                    "总觉得有很多事要操心，放松不下来"
+                ]
+            },
+            "关节": {
+                questions: [
+                    "具体是哪些关节不适？",
+                    "疼痛的性质是怎样的？（酸痛/刺痛/胀痛）",
+                    "与天气变化是否有关？",
+                    "活动后是缓解还是加重？"
+                ],
+                responses: [
+                    "主要是膝关节和手指关节",
+                    "酸痛感为主，有时有刺痛",
+                    "阴雨天特别明显",
+                    "活动后稍微缓解一些"
+                ]
+            },
+            "咳嗽": {
+                questions: [
+                    "咳嗽有痰吗？痰的颜色和质地如何？",
+                    "咳嗽在什么时间加重？",
+                    "咽喉是否痒或痛？",
+                    "有无胸闷气短？"
+                ],
+                responses: [
+                    "有少量黄痰，比较粘稠",
+                    "晚上躺下后咳嗽加重",
+                    "喉咙痒，总想咳嗽",
+                    "有时感觉胸闷，深呼吸舒服些"
+                ]
+            },
+            "月经": {
+                questions: [
+                    "月经周期规律吗？多少天一次？",
+                    "经期持续几天？经量如何？",
+                    "经血颜色和质地？",
+                    "痛经在什么时间最严重？"
+                ],
+                responses: [
+                    "很不规律，30-45天不等",
+                    "经期5-7天，量偏少",
+                    "颜色暗红，有血块",
+                    "经前1天和经期第1天最痛"
+                ]
+            },
+            "皮肤": {
+                questions: [
+                    "瘙痒在什么部位最严重？",
+                    "皮损形态如何？（红疹/水泡/脱屑）",
+                    "有无渗出或结痂？",
+                    "与饮食是否有关？"
+                ],
+                responses: [
+                    "主要在四肢屈侧和颈部",
+                    "红色丘疹为主，有些地方有小水泡",
+                    "有渗出，结黄色痂",
+                    "吃了海鲜后明显加重"
+                ]
+            },
+            "心悸": {
+                questions: [
+                    "心悸发作的频率如何？",
+                    "每次持续多长时间？",
+                    "什么情况下容易发作？",
+                    "有无伴随症状？"
+                ],
+                responses: [
+                    "每天发作2-3次",
+                    "每次持续几分钟到十几分钟",
+                    "劳累或情绪激动时容易发作",
+                    "伴有胸闷和头晕"
+                ]
+            }
+        };
+
+        // DOM元素
+        const messageContainer = document.getElementById('messageContainer');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const expertPanel = document.getElementById('expertPanel');
+        const expertToggle = document.getElementById('expertToggle');
+        const optionCards = document.querySelectorAll('.option-card');
+        const quickQuestions = document.querySelectorAll('.quick-q');
+        const notification = document.getElementById('notification');
+        const tcmTabs = document.querySelectorAll('.tcm-tab');
+        const patientSelector = document.getElementById('patientSelector');
+        
+        // 病人信息元素
+        const patientName = document.getElementById('patientName');
+        const patientGender = document.getElementById('patientGender');
+        const patientAge = document.getElementById('patientAge');
+        const patientOccupation = document.getElementById('patientOccupation');
+        const symptomsList = document.getElementById('symptomsList');
+        const diseaseDuration = document.getElementById('diseaseDuration');
+        const treatmentHistory = document.getElementById('treatmentHistory');
+        const physicalFeatures = document.getElementById('physicalFeatures');
+        const consultationTips = document.getElementById('consultationTips');
+        
+        // 当前状态
+        let currentStrategy = '肝阳上亢型策略';
+        let currentPatient = patients[0];
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 添加初始消息
+            addMessage("作为中医学生，请按照中医四诊要求进行问诊。问诊时应围绕主诉展开，重点了解现在症，包括寒热、汗、头身、二便等情况", false, true);
+            
+            // 病人选择事件
+            patientSelector.addEventListener('change', function() {
+                const selectedId = parseInt(this.value);
+                currentPatient = patients.find(p => p.id === selectedId);
+                updatePatientInfo();
+                resetChat();
+            });
+            
+            // 显示加载通知
+            setTimeout(() => {
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }, 1000);
+        });
+
+        // 更新病人信息
+        function updatePatientInfo() {
+            patientName.textContent = currentPatient.name;
+            patientGender.textContent = currentPatient.gender;
+            patientAge.textContent = currentPatient.age;
+            patientOccupation.textContent = currentPatient.occupation;
+            diseaseDuration.textContent = currentPatient.diseaseDuration;
+            treatmentHistory.textContent = currentPatient.treatmentHistory;
+            physicalFeatures.textContent = currentPatient.physicalFeatures;
+            consultationTips.textContent = currentPatient.consultationTips;
+            
+            // 更新症状列表
+            symptomsList.innerHTML = '';
+            currentPatient.symptoms.forEach(symptom => {
+                const tag = document.createElement('span');
+                tag.classList.add('symptom-tag');
+                tag.textContent = symptom;
+                symptomsList.appendChild(tag);
+            });
+            
+            // 更新策略
+            optionCards.forEach(card => {
+                card.classList.remove('active');
+                if (card.querySelector('h5').textContent === currentPatient.strategy) {
+                    card.classList.add('active');
+                    currentStrategy = currentPatient.strategy;
+                }
+            });
+        }
+
+        // 重置聊天
+        function resetChat() {
+            messageContainer.innerHTML = '';
+            
+            // 添加初始消息
+            addMessage(currentPatient.initialMessage, false);
+            
+            // 添加系统提示
+            setTimeout(() => {
+                addMessage(`您已选择${currentPatient.name}的病例。${currentPatient.consultationTips}`, false, true);
+            }, 500);
+        }
+
+        // 策略选择
+        optionCards.forEach(card => {
+            card.addEventListener('click', function() {
+                optionCards.forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                currentStrategy = this.querySelector('h5').textContent;
+                
+                // 根据策略显示提示
+                let tip = "";
+                if(currentStrategy === "肝阳上亢型策略") {
+                    tip = "您已选择肝阳上亢型问诊策略。重点询问头痛性质、情绪波动、睡眠质量、眩晕特点";
+                } else if(currentStrategy === "气血亏虚型策略") {
+                    tip = "您已选择气血亏虚型问诊策略。重点询问疲劳程度、面色、月经情况(女性患者)、食欲和二便";
+                } else if(currentStrategy === "痰湿内阻型策略") {
+                    tip = "您已选择痰湿内阻型问诊策略。重点询问头重感、胸闷、痰多、食欲、二便黏腻情况";
+                } else {
+                    tip = "您已选择肾精不足型问诊策略。重点询问腰膝酸软、耳鸣、记忆力、性功能状况";
+                }
+                
+                addMessage(tip, false, true);
+            });
+        });
+
+        // 专家面板切换
+        expertToggle.addEventListener('click', () => {
+            expertPanel.classList.toggle('active');
+        });
+
+        // 标签切换
+        tcmTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tcmTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 快捷问题
+        quickQuestions.forEach(q => {
+            q.addEventListener('click', function() {
+                userInput.value = this.textContent;
+                sendBtn.click();
+            });
+        });
+
+        // 添加消息
+        function addMessage(content, isUser = false, isSystem = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            
+            if (isSystem) {
+                messageDiv.classList.add('bot-message');
+                messageDiv.innerHTML = `
+                    <h4><i class="fas fa-lightbulb"></i> 系统提示</h4>
+                    <div>${content}</div>
+                `;
+            } else if (isUser) {
+                messageDiv.classList.add('user-message');
+                messageDiv.innerHTML = `<p>${content}</p>`;
+            } else {
+                messageDiv.classList.add('bot-message');
+                messageDiv.innerHTML = `
+                    <h4><i class="fas fa-robot"></i> 虚拟患者</h4>
+                    <div>${content}</div>
+                `;
+            }
+            
+            messageContainer.appendChild(messageDiv);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // 发送消息
+        sendBtn.addEventListener('click', () => {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                userInput.value = '';
+                
+                // 模拟患者响应
+                setTimeout(() => {
+                    let response = "您能说得更具体些吗？我不太明白。";
+                    let found = false;
+                    
+                    // 在知识库中查找匹配答案
+                    for (const [key, data] of Object.entries(tcmKnowledge)) {
+                        if (message.includes(key)) {
+                            const randomIndex = Math.floor(Math.random() * data.responses.length);
+                            response = data.responses[randomIndex];
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    // 特定策略的响应
+                    if (!found) {
+                        if (currentStrategy === "肝阳上亢型策略" && message.includes("情绪")) {
+                            response = "最近工作压力大，经常觉得烦躁，小事就容易发脾气。";
+                        } else if (currentStrategy === "气血亏虚型策略" && message.includes("疲劳")) {
+                            response = "总是感觉很累，稍微活动就气短乏力，想躺着休息。";
+                        } else if (message.includes("睡眠")) {
+                            response = "最近一个月很难入睡，经常半夜醒来，梦很多。";
+                        } else if (message.includes("二便")) {
+                            response = "大便偏干，2-3天一次，小便偏黄。";
+                        }
+                    }
+                    
+                    addMessage(response);
+                    
+                    // 根据策略自动提示下一个问题
+                    if (currentStrategy === "肝阳上亢型策略" && message.includes("头痛")) {
+                        setTimeout(() => {
+                            addMessage("作为肝阳上亢型策略，接下来应询问睡眠情况和情绪状态", false, true);
+                        }, 1000);
+                    }
+                }, 800);
+            }
+        });
+        
+        // 支持按Enter键发送
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+        
+        // 显示通知
+        function showNotification(message) {
+            notification.querySelector('span').textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
